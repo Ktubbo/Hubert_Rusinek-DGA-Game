@@ -1,22 +1,21 @@
 package com.dga.player;
 
 import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
 
 public class Pon {
 
     int numberOfFieldsTraveled=0;
-    int ponPosition;
+    int playerMapPonPosition;
+    int boardPosition;
     int[] startPosition;
     int[] basePosition;
     Button button;
-
+    Boolean canMove=false;
 
     public Pon(Button button,int[] startPosition, int[] basePosition) {
         this.button = button;
         this.startPosition = startPosition;
         this.basePosition = basePosition;
-
     }
 
     public int getNumberOfFieldsTraveled() {
@@ -27,20 +26,16 @@ public class Pon {
         this.numberOfFieldsTraveled = numberOfFieldsTraveled;
     }
 
-    public int getPonPosition() {
-        return ponPosition;
+    public int getPlayerMapPonPosition() {
+        return playerMapPonPosition;
     }
 
-    public void setPonPosition(int ponPosition) {
-        this.ponPosition = ponPosition;
+    public void setPlayerMapPonPosition(int playerMapPonPosition) {
+        this.playerMapPonPosition = playerMapPonPosition;
     }
 
     public Button getButton() {
         return button;
-    }
-
-    public void setButton(Button button) {
-        this.button = button;
     }
 
     public int[] getStartPosition() {
@@ -52,13 +47,24 @@ public class Pon {
     }
 
 
-    public void start(GridPane grid){
-
-        grid.getChildren().remove(button);
-        grid.add(button,startPosition[0],startPosition[1]);
-        setPonPosition(1);
-
+    public int getBoardPosition() {
+        return boardPosition;
     }
 
+    public void setBoardPosition(int boardPosition) {
+        this.boardPosition = boardPosition;
+    }
+
+    public Boolean getCanMove() { return canMove; }
+
+    public void setCanMove(Boolean canMove) { this.canMove = canMove; }
+
+    @Override
+    public String toString() {
+        return "Pon{" +
+                "numberOfFieldsTraveled=" + numberOfFieldsTraveled +
+                ", boardPosition=" + boardPosition +
+                '}';
+    }
 }
 

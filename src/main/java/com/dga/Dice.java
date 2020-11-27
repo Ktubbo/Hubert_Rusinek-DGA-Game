@@ -1,6 +1,7 @@
 package com.dga;
 
 import javafx.scene.control.Button;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -24,6 +25,7 @@ public class Dice {
 
     public Dice(){
 
+
         diceViewList.add(0,new ImageView());
         diceViewList.add(1,one);
         diceViewList.add(2,two);
@@ -38,17 +40,18 @@ public class Dice {
 
         dice.setGraphic(one);
         dice.setStyle("-fx-border-color: transparent;-fx-background-color: transparent;");
-        dice.setOnAction((e) -> {
-            randomInt = rollDice();
-            dice.setGraphic(diceViewList.get(randomInt));
-        });
     }
 
     public int rollDice(){
+        ColorAdjust colorAdjust = new ColorAdjust();
         Random random = new Random();
         int i = random.nextInt(6)+1;
         setRandomInt(i);
+        ImageView imageView = getDiceViewList().get(getRandomInt());
+        colorAdjust.setHue(-1+(2*random.nextDouble()));
+        imageView.setEffect(colorAdjust);
         dice.setGraphic(getDiceViewList().get(getRandomInt()));
+
         return i;
     }
 
@@ -66,5 +69,16 @@ public class Dice {
 
     public List<ImageView> getDiceViewList() {
         return diceViewList;
+    }
+
+    public void activateDice(){
+        dice.setOnAction((e) -> {
+            randomInt = rollDice();
+            dice.setGraphic(diceViewList.get(randomInt));
+        });
+    }
+
+    public void deactivateDice(){
+        dice.setOnAction((e) -> { });
     }
 }

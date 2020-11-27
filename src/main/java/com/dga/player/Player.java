@@ -6,21 +6,23 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Player {
 
     String playerName;
-    List<Pon> ponList = new ArrayList<>();
+    LinkedList<Pon> ponInBaseList = new LinkedList<>();
+    LinkedList<Pon> ponOnBoardList = new LinkedList<>();
     int[] startPosition;
+    int[] dicePosition;
     List<int[]> winPositions;
     Map<Integer,int[]> playerMap = new HashMap<>();
-    Map<Integer, Boolean> ponOnBoardMap = new HashMap<>();
+    int boardWinNumber;
+    boolean playedByComputer=false;
+    int startBoardPosition;
 
-    public Player(Image image, int[] startPosition, List<int[]> basePositions, List<int[]> winPositions){
+    public Player(Image image, int[] startPosition, List<int[]> basePositions, List<int[]> winPositions, int[] dicePosition,
+                  int boardWinNumber){
 
         List<ImageView> imageViews = new ArrayList<>();
         for(int i=0;i<4;i++){
@@ -29,9 +31,13 @@ public class Player {
             imageViews.get(i).setFitWidth(65);}
         this.startPosition = startPosition;
         this.winPositions = winPositions;
-        for(int i=0;i<4;i++){ponList.add(new Pon(new Button(),startPosition,basePositions.get(i)));}
-        for(int i=0;i<4;i++){ponList.get(i).getButton().setGraphic(imageViews.get(i));
-            ponList.get(i).getButton().setStyle("-fx-border-color: transparent;-fx-background-color: transparent;");}
+        this.dicePosition = dicePosition;
+        this.boardWinNumber = boardWinNumber;
+        for(int i=0;i<4;i++){
+            ponInBaseList.add(new Pon(new Button(),startPosition,basePositions.get(i)));}
+        for(int i=0;i<4;i++){
+            ponInBaseList.get(i).getButton().setGraphic(imageViews.get(i));
+            ponInBaseList.get(i).getButton().setStyle("-fx-border-color: transparent;-fx-background-color: transparent;");}
 
         BoardMap boardMap = new BoardMap();
         int key = boardMap.getKey(startPosition).get();
@@ -51,50 +57,75 @@ public class Player {
             playerMap.put(40+i,winPositions.get(i-1));
         }
 
+        startBoardPosition = boardMap.getKey(new int[]{getStartPosition()[0], getStartPosition()[1]}).get();
     }
 
-    public void move(Pon pon, int tilesNumber, GridPane grid){
-
-        grid.getChildren().remove(pon.getButton());
-        grid.add(pon.getButton(),playerMap.get(pon.getPonPosition()+tilesNumber)[0],
-                playerMap.get(pon.getPonPosition()+tilesNumber)[1]);
-        pon.setPonPosition(pon.getPonPosition()+tilesNumber);
+    public LinkedList<Pon> getPonOnBoardList() {
+        return ponOnBoardList;
     }
 
-    public void activate(Pon pon,GridPane grid){
-
-        pon.getButton().setOnAction((e) -> {
-            move(pon,1, grid);
-        });
-    }
-
-    public void deactivate(Pon pon){
-        pon.getButton().setOnAction((e) -> {});
-    }
-
-
-
-    public String getPlayerName() {
-        return playerName;
+    public int[] getStartPosition() {
+        return startPosition;
     }
 
     public void setPlayerName(String playerName) {
         this.playerName = playerName;
     }
 
-    public List<Pon> getPonList() {
-        return ponList;
+    public int[] getDicePosition() {
+        return dicePosition;
+    }
+
+    public LinkedList<Pon> getPonInBaseList() {
+        return ponInBaseList;
     }
 
     public Map<Integer, int[]> getPlayerMap() {
         return playerMap;
     }
 
-    public Map<Integer, Boolean> getPonOnBoardMap() {
-        return ponOnBoardMap;
+    public void sendPonOnBoard(Pon pon, GridPane grid){
+
+        BoardMap boardMap = new BoardMap();
+        ponInBaseList.remove(pon);
+        ponOnBoardList.add(pon);
+        grid.getChildren().remove(pon.getButton());
+        grid.add(pon.getButton(),pon.getStartPosition()[0],pon.getStartPosition()[1]);
+        pon.setPlayerMapPonPosition(1);
+        pon.setBoardPosition(boardMap.getKey(new int[]{pon.getStartPosition()[0],
+        pon.getStartPosition()[1]}).get());
+        pon.getButton().setOnAction(e->{});
+
     }
 
-    public void setPonOnBoardMap(Map<Integer, Boolean> ponOnBoardMap) {
-        this.ponOnBoardMap = ponOnBoardMap;
+    public void sendPonToBase(Pon pon, GridPane grid){
+        ponOnBoardList.remove(pon);
+        ponInBaseList.add(pon);
+        grid.getChildren().remove(pon.getButton());
+        grid.add(pon.getButton(),pon.getBasePosition()[0],pon.getBasePosition()[1]);
+        pon.setNumberOfFieldsTraveled(0);
+        pon.setPlayerMapPonPosition(0);
+        pon.setBoardPosition(0);
+    }
+
+    @Override
+    public String toString() {
+        return "Player " + playerName;
+    }
+
+    public int getBoardWinNumber() {
+        return boardWinNumber;
+    }
+
+    public boolean isPlayedByComputer() {
+        return playedByComputer;
+    }
+
+    public void setPlayedByComputer(boolean playedByComputer) {
+        this.playedByComputer = playedByComputer;
+    }
+
+    public int getStartBoardPosition() {
+        return startBoardPosition;
     }
 }

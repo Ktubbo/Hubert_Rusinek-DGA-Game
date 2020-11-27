@@ -35,6 +35,10 @@ public class BoardMap {
 
         boardMap.remove(41);
 
+        addWinPositions(43,new int[]{5,1},new int[]{5,4});
+        addWinPositions(53,new int[]{9,5},new int[]{6,5});
+        addWinPositions(63,new int[]{5,9},new int[]{5,6});
+        addWinPositions(73,new int[]{1,5},new int[]{4,5});
     }
 
     public List<int[]> insertBoardLine(int[] a,int[] b){
@@ -77,5 +81,12 @@ public class BoardMap {
                 .filter(e -> Objects.equals(e.getValue()[1],position[1]))
                 .map(Map.Entry::getKey)
                 .findAny();
+    }
+
+    public void addWinPositions(int startValue, int[] a, int[] b){
+        boardMap.put(startValue,a);
+        for(int i=0;i<insertBoardLine(a,b).size();i++){
+            boardMap.put(startValue+1+i,insertBoardLine(a,b).get(i));
+        }
     }
 }
